@@ -32,12 +32,6 @@ export default function LoginScreen() {
         style={styles.imageBackground}
         resizeMode="cover"
       >
-        <TouchableOpacity 
-          style={styles.backButton} 
-          onPress={() => router.back()}
-        >
-          <Ionicons name="chevron-back" size={24} color="white" />
-        </TouchableOpacity>
       </ImageBackground>
 
       <View style={styles.card}>
