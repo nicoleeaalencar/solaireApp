@@ -4,23 +4,31 @@ import {
   TouchableOpacity, TextInput 
 } from "react-native";
 import { FontAwesome5, Ionicons } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 
 export default function RegisterScreen() {
+  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   return (
     <View style={styles.container}>
+      {/* Imagem de fundo no topo */}
       <ImageBackground
         source={require("@/assets/welcome.jpeg")}
         style={styles.imageBackground}
         resizeMode="cover"
       >
-        <TouchableOpacity style={styles.backButton}>
+        {/* Botão de voltar */}
+        <TouchableOpacity 
+          style={styles.backButton}
+          onPress={() => router.back()} // volta para a tela anterior
+        >
           <Ionicons name="chevron-back" size={24} color="white" />
         </TouchableOpacity>
       </ImageBackground>
 
+      {/* Card de cadastro */}
       <View style={styles.card}>
         <Text style={styles.cardTitle}>Crie sua conta</Text>
         <Text style={styles.cardSubtitle}>Preencha os campos abaixo</Text>
@@ -78,13 +86,15 @@ export default function RegisterScreen() {
           />
         </View>
 
+        {/* Botão de cadastro */}
         <TouchableOpacity style={styles.registerButton}>
           <Text style={styles.registerButtonText}>Cadastrar</Text>
         </TouchableOpacity>
 
+        {/* Link para login */}
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Já tem conta? </Text>
-          <TouchableOpacity>
+          <TouchableOpacity onPress={() => router.push("/auth/login")}>
             <Text style={styles.signupLink}>Entrar</Text>
           </TouchableOpacity>
         </View>
