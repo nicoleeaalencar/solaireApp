@@ -10,13 +10,28 @@ import {
 import Svg, { Circle } from "react-native-svg";
 import { LinearGradient } from 'expo-linear-gradient';
 
-export default function HomeScreen() {
+export default function TelaInicial() {
   const hoje = new Date();
   const [dataSelecionada, setDataSelecionada] = useState(hoje);
 
   const hora = hoje.getHours();
   const saudacao =
     hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+
+  // Gradiente dinâmico conforme hora
+  let coresGradiente;
+  let corTextoCabecalho;
+
+  if (hora < 12) {
+    coresGradiente = ["#A1C4FD", "#C2E9FB"]; // manhã
+    corTextoCabecalho = "#333";
+  } else if (hora < 18) {
+    coresGradiente = ["#9FA5D5", "#E8F5C8"]; // tarde
+    corTextoCabecalho = "#333";
+  } else {
+    coresGradiente = ["#2C3E50", "#4CA1AF"]; // noite
+    corTextoCabecalho = "#fff";
+  }
 
   const formatarData = (data) => {
     return data.toLocaleDateString("pt-BR", { day: "numeric", month: "short" });
@@ -33,7 +48,7 @@ export default function HomeScreen() {
     <ScrollView style={estilos.tela}>
       <View style={estilos.cabecalho}>
         <LinearGradient
-          colors={["#9FA5D5", "#E8F5C8"]}
+          colors={coresGradiente}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 3 }}
           style={estilos.fundoGradiente}
@@ -44,18 +59,22 @@ export default function HomeScreen() {
             source={require("../../assets/perfil-avatar.png")}
             style={estilos.imagemPerfil}
           />
-          <Text style={estilos.saudacao}>{saudacao}</Text>
+          <Text style={[estilos.saudacao, { color: corTextoCabecalho }]}>
+            {saudacao}
+          </Text>
         </View>
 
         <View style={estilos.infoCabecalho}>
-          <Text style={estilos.dataHoje}>
+          <Text style={[estilos.dataHoje, { color: corTextoCabecalho }]}>
             Hoje,{" "}
             {hoje.toLocaleDateString("pt-BR", {
               day: "numeric",
               month: "short",
             })}
           </Text>
-          <Text style={estilos.tituloAtividades}>Suas Atividades</Text>
+          <Text style={[estilos.tituloAtividades, { color: corTextoCabecalho }]}>
+            Suas Atividades
+          </Text>
         </View>
 
         <View style={estilos.linhaDias}>
@@ -168,7 +187,6 @@ const estilos = StyleSheet.create({
   saudacao: {
     fontSize: 20,
     fontWeight: "600",
-    color: "#333",
   },
   infoCabecalho: {
     alignItems: "center",
@@ -177,13 +195,11 @@ const estilos = StyleSheet.create({
   },
   dataHoje: {
     fontSize: 14,
-    color: "#555",
     marginBottom: 5,
   },
   tituloAtividades: {
     fontSize: 22,
     fontWeight: "bold",
-    color: "#333",
   },
   linhaDias: {
     flexDirection: "row",
