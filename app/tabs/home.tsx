@@ -1,60 +1,85 @@
-import React from "react";
-import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from "react-native";
-import { Ionicons, FontAwesome5, MaterialCommunityIcons } from "@expo/vector-icons";
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ScrollView,
+  Image,
+} from "react-native";
 
 export default function HomeScreen() {
+  const today = new Date();
+  const [selectedDate, setSelectedDate] = useState(today);
+
+  // Função de saudação dinâmica
+  const hora = today.getHours();
+  const saudacao =
+    hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+
+  // Datas
+  const formatDate = (date) => {
+    return date.toLocaleDateString("pt-BR", { day: "numeric", month: "short" });
+  };
+
+  const days = [];
+  for (let i = -1; i <= 1; i++) {
+    const d = new Date(today);
+    d.setDate(today.getDate() + i);
+    days.push(d);
+  }
+
   return (
     <ScrollView style={styles.container}>
-      {/* Cabeçalho */}
-      <View style={styles.header}>
-        <Text style={styles.welcome}>Olá, Gustavo</Text>
-        <Text style={styles.subtitle}>Resumo do seu sistema</Text>
-      </View>
+      <View style={styles.headerContainer}>
+        <View style={styles.curvedBackground} />
 
-      {/* Cards principais */}
-      <View style={styles.cardContainer}>
-        <View style={styles.card}>
-          <Ionicons name="sunny" size={28} color="#FFA500" />
-          <Text style={styles.cardValue}>5.2 kWh</Text>
-          <Text style={styles.cardLabel}>Gerado Hoje</Text>
+        {/* head perfil*/}
+        <View style={styles.avatarRow}>
+          <Image
+            source={require("../../assets/perfil-avatar.png")}
+            style={styles.avatarImagem}
+          />
+          <Text style={styles.saudacao}>{saudacao} </Text>
         </View>
 
-        <View style={styles.card}>
-          <FontAwesome5 name="money-bill-wave" size={26} color="#2ecc71" />
-          <Text style={styles.cardValue}>R$ 24,80</Text>
-          <Text style={styles.cardLabel}>Economia</Text>
+        {/* Data | título */}
+        <View style={styles.headerTextContent}>
+          <Text style={styles.date}>
+            Hoje,{" "}
+            {today.toLocaleDateString("pt-BR", {
+              day: "numeric",
+              month: "short",
+            })}
+          </Text>
+          <Text style={styles.title}>Suas Atividades</Text>
         </View>
 
-        <View style={styles.card}>
-          <MaterialCommunityIcons name="tree-outline" size={28} color="#27ae60" />
-          <Text style={styles.cardValue}>2.3 kg</Text>
-          <Text style={styles.cardLabel}>CO₂ Evitado</Text>
+        {/* Dias */}
+        <View style={styles.daysRow}>
+          {days.map((day, index) => {
+            const isSelected = formatDate(day) === formatDate(selectedDate);
+            return (
+              <TouchableOpacity
+                key={index}
+                onPress={() => setSelectedDate(day)}
+                style={[styles.dayItem, isSelected && styles.dayActive]}
+              >
+                <Text
+                  style={[styles.dayText, isSelected && styles.dayTextActive]}
+                >
+                  {formatDate(day)}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </View>
       </View>
 
-      {/* Status do sistema */}
-      <View style={styles.statusCard}>
-        <Ionicons name="checkmark-circle" size={24} color="green" />
-        <Text style={styles.statusText}>Sistema Online - Produzindo energia ☀️</Text>
-      </View>
-
-      {/* Acesso rápido */}
-      <Text style={styles.sectionTitle}>Acesso Rápido</Text>
-      <View style={styles.quickActions}>
-        <TouchableOpacity style={styles.actionButton}>
-          <Ionicons name="analytics" size={24} color="#0a3a5a" />
-          <Text style={styles.actionText}>Histórico</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton}>
-          <Ionicons name="document-text" size={24} color="#0a3a5a" />
-          <Text style={styles.actionText}>Relatórios</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.actionButton}>
-          <Ionicons name="settings" size={24} color="#0a3a5a" />
-          <Text style={styles.actionText}>Configurações</Text>
-        </TouchableOpacity>
+      {/* Total Energia */}
+      <View style={styles.energyBox}>
+        <Text style={styles.energyValue}>210V</Text>
+        <Text style={styles.energyLabel}>Energia Total</Text>
       </View>
     </ScrollView>
   );
@@ -63,81 +88,108 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#e6f3f0",
-    padding: 20,
+    backgroundColor: "#fafafaff",
   },
-  header: {
-    marginBottom: 20,
-  },
-  welcome: {
-    fontSize: 22,
-    fontWeight: "bold",
-    color: "#0a3a5a",
-  },
-  subtitle: {
-    fontSize: 14,
-    color: "#555",
-    marginTop: 5,
-  },
-  cardContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    marginBottom: 25,
-  },
-  card: {
-    flex: 1,
-    backgroundColor: "#fff",
-    marginHorizontal: 5,
-    padding: 15,
-    borderRadius: 15,
+  headerContainer: {
+    backgroundColor: "#fafafaff",
+    paddingBottom: 2,
     alignItems: "center",
-    shadowColor: "#000",
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    position: "relative",
+    borderBottomLeftRadius: 50,
+    borderBottomRightRadius: 50,
   },
-  cardValue: {
-    fontSize: 18,
-    fontWeight: "bold",
-    marginVertical: 5,
+  curvedBackground: {
+    backgroundColor: "#e6f2f9ff",
+    position: "absolute",
+    top: 0,
+    left: 0,
+    right: 0,
+    height: 310,
+    borderBottomLeftRadius: 30,
+    borderBottomRightRadius: 30,
+    zIndex: 0,
+  },
+  avatarRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginTop: 80,
+    zIndex: 1,
+    paddingHorizontal: 20,
+  },
+  avatarImagem: {
+    width: 60,
+    height: 60,
+    marginRight: 12,
+  },
+  saudacao: {
+    fontSize: 20,
+    fontWeight: "600",
     color: "#333",
   },
-  cardLabel: {
-    fontSize: 12,
-    color: "#888",
-  },
-  statusCard: {
-    flexDirection: "row",
+  headerTextContent: {
     alignItems: "center",
-    backgroundColor: "#dff6dd",
-    padding: 15,
-    borderRadius: 12,
-    marginBottom: 25,
+    marginTop: 15,
+    marginBottom: 20,
   },
-  statusText: {
-    marginLeft: 10,
+  date: {
     fontSize: 14,
-    color: "#2e7d32",
-    fontWeight: "500",
+    color: "#555",
+    marginBottom: 5,
   },
-  sectionTitle: {
-    fontSize: 16,
+  title: {
+    fontSize: 22,
     fontWeight: "bold",
-    marginBottom: 15,
-    color: "#0a3a5a",
+    color: "#333",
   },
-  quickActions: {
+  daysRow: {
     flexDirection: "row",
     justifyContent: "space-around",
-    marginBottom: 40,
+    marginVertical: 15,
+    width: "100%",
+    paddingHorizontal: 10,
   },
-  actionButton: {
-    alignItems: "center",
+  dayItem: {
+    paddingVertical: 8,
+    paddingHorizontal: 15,
+    borderRadius: 20,
   },
-  actionText: {
-    marginTop: 5,
+  dayText: {
     fontSize: 14,
-    color: "#0a3a5a",
-    fontWeight: "500",
+    color: "#888",
+  },
+  dayActive: {
+    backgroundColor: "#0a3a5a",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.08,
+    shadowRadius: 2,
+    elevation: 2,
+  },
+  dayTextActive: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  energyBox: {
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    marginHorizontal: 20,
+    marginTop: 30,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 3,
+  },
+  energyValue: {
+    fontSize: 32,
+    fontWeight: "bold",
+    color: "#333",
+  },
+  energyLabel: {
+    fontSize: 16,
+    color: "#777",
+    marginTop: 8,
   },
 });
