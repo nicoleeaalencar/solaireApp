@@ -10,68 +10,67 @@ import {
 import Svg, { Circle } from "react-native-svg";
 import { LinearGradient } from 'expo-linear-gradient';
 
-
 export default function HomeScreen() {
-  const today = new Date();
-  const [selectedDate, setSelectedDate] = useState(today);
+  const hoje = new Date();
+  const [dataSelecionada, setDataSelecionada] = useState(hoje);
 
-  const hora = today.getHours();
+  const hora = hoje.getHours();
   const saudacao =
     hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
 
-  const formatDate = (date) => {
-    return date.toLocaleDateString("pt-BR", { day: "numeric", month: "short" });
+  const formatarData = (data) => {
+    return data.toLocaleDateString("pt-BR", { day: "numeric", month: "short" });
   };
 
-  const days = [];
+  const dias = [];
   for (let i = -1; i <= 1; i++) {
-    const d = new Date(today);
-    d.setDate(today.getDate() + i);
-    days.push(d);
+    const d = new Date(hoje);
+    d.setDate(hoje.getDate() + i);
+    dias.push(d);
   }
 
   return (
-    <ScrollView style={styles.container}>
-      <View style={styles.headerContainer}>
+    <ScrollView style={estilos.tela}>
+      <View style={estilos.cabecalho}>
         <LinearGradient
           colors={["#9FA5D5", "#E8F5C8"]}
           start={{ x: 0, y: 1 }}
           end={{ x: 1, y: 3 }}
-          style={styles.curvedBackground}
+          style={estilos.fundoGradiente}
         />
 
-        <View style={styles.avatarRow}>
+        <View style={estilos.linhaPerfil}>
           <Image
             source={require("../../assets/perfil-avatar.png")}
-            style={styles.avatarImagem}
+            style={estilos.imagemPerfil}
           />
-          <Text style={styles.saudacao}>{saudacao}</Text>
+          <Text style={estilos.saudacao}>{saudacao}</Text>
         </View>
 
-        <View style={styles.headerTextoContainer}>
-          <Text style={styles.date}>
+        <View style={estilos.infoCabecalho}>
+          <Text style={estilos.dataHoje}>
             Hoje,{" "}
-            {today.toLocaleDateString("pt-BR", {
+            {hoje.toLocaleDateString("pt-BR", {
               day: "numeric",
               month: "short",
             })}
           </Text>
-          <Text style={styles.title}>Suas Atividades</Text>
+          <Text style={estilos.tituloAtividades}>Suas Atividades</Text>
         </View>
 
-        <View style={styles.daysRow}>
-          {days.map((day, index) => {
-            const isSelected = formatDate(day) === formatDate(selectedDate);
+        <View style={estilos.linhaDias}>
+          {dias.map((dia, index) => {
+            const selecionado = formatarData(dia) === formatarData(dataSelecionada);
             return (
               <TouchableOpacity
                 key={index}
-                onPress={() => setSelectedDate(day)}
-                style={[styles.dayItem, isSelected && styles.dayActive]}
+                onPress={() => setDataSelecionada(dia)}
+                style={[estilos.botaoDia, selecionado && estilos.botaoDiaAtivo]}
               >
                 <Text
-                  style={[styles.dayText, isSelected && styles.dayTextActive]}
+                  style={[estilos.textoDia, selecionado && estilos.textoDiaAtivo]}
                 >
-                  {formatDate(day)}
+                  {formatarData(dia)}
                 </Text>
               </TouchableOpacity>
             );
@@ -79,20 +78,20 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Total Energia com gráfico bolinha */}
-      <View style={styles.energyBox}>
-        <CircularProgress progress={70} />
-        <Text style={styles.energyLabel}>Energia Total</Text>
+      {/* Energia com gráfico circular */}
+      <View style={estilos.caixaEnergia}>
+        <GraficoCircular progresso={70} />
+        <Text style={estilos.rotuloEnergia}>Energia Total</Text>
       </View>
     </ScrollView>
   );
 }
 
-//gráfico bolinha
-function CircularProgress({ size = 120, strokeWidth = 10, progress = 70, color = "#0a3a5a" }) {
-  const radius = (size - strokeWidth) / 2;
-  const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (progress / 100) * circumference;
+// Gráfico circular
+function GraficoCircular({ size = 120, strokeWidth = 10, progresso = 70, cor = "#0a3a5a" }) {
+  const raio = (size - strokeWidth) / 2;
+  const circunferencia = 2 * Math.PI * raio;
+  const deslocamento = circunferencia - (progresso / 100) * circunferencia;
 
   return (
     <View style={{ alignItems: "center", justifyContent: "center" }}>
@@ -102,18 +101,18 @@ function CircularProgress({ size = 120, strokeWidth = 10, progress = 70, color =
           fill="none"
           cx={size / 2}
           cy={size / 2}
-          r={radius}
+          r={raio}
           strokeWidth={strokeWidth}
         />
         <Circle
-          stroke={color}
+          stroke={cor}
           fill="none"
           cx={size / 2}
           cy={size / 2}
-          r={radius}
+          r={raio}
           strokeWidth={strokeWidth}
-          strokeDasharray={`${circumference} ${circumference}`}
-          strokeDashoffset={strokeDashoffset}
+          strokeDasharray={`${circunferencia} ${circunferencia}`}
+          strokeDashoffset={deslocamento}
           strokeLinecap="round"
           rotation="-90"
           origin={`${size / 2}, ${size / 2}`}
@@ -125,18 +124,18 @@ function CircularProgress({ size = 120, strokeWidth = 10, progress = 70, color =
         fontWeight: "bold",
         color: "#333"
       }}>
-        {progress}%
+        {progresso}%
       </Text>
     </View>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
+const estilos = StyleSheet.create({
+  tela: {
     flex: 1,
     backgroundColor: "#fafafaff",
   },
-  headerContainer: {
+  cabecalho: {
     paddingBottom: 2,
     alignItems: "center",
     position: "relative",
@@ -144,7 +143,7 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 50,
     overflow: "hidden",
   },
-  curvedBackground: {
+  fundoGradiente: {
     position: "absolute",
     top: 0,
     left: 0,
@@ -154,14 +153,14 @@ const styles = StyleSheet.create({
     borderBottomRightRadius: 30,
     zIndex: 0,
   },
-  avatarRow: {
+  linhaPerfil: {
     flexDirection: "row",
     alignItems: "center",
     marginTop: 80,
     zIndex: 1,
     paddingHorizontal: 20,
   },
-  avatarImagem: {
+  imagemPerfil: {
     width: 60,
     height: 60,
     marginRight: 12,
@@ -171,38 +170,38 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
   },
-  headerTextoContainer: {
+  infoCabecalho: {
     alignItems: "center",
     marginTop: 15,
     marginBottom: 20,
   },
-  date: {
+  dataHoje: {
     fontSize: 14,
     color: "#555",
     marginBottom: 5,
   },
-  title: {
+  tituloAtividades: {
     fontSize: 22,
     fontWeight: "bold",
     color: "#333",
   },
-  daysRow: {
+  linhaDias: {
     flexDirection: "row",
     justifyContent: "space-around",
     marginVertical: 15,
     width: "100%",
     paddingHorizontal: 10,
   },
-  dayItem: {
+  botaoDia: {
     paddingVertical: 8,
     paddingHorizontal: 15,
     borderRadius: 20,
   },
-  dayText: {
+  textoDia: {
     fontSize: 14,
     color: "#888",
   },
-  dayActive: {
+  botaoDiaAtivo: {
     backgroundColor: "#0a3a5a",
     shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
@@ -210,11 +209,11 @@ const styles = StyleSheet.create({
     shadowRadius: 2,
     elevation: 2,
   },
-  dayTextActive: {
+  textoDiaAtivo: {
     color: "#fff",
     fontWeight: "bold",
   },
-  energyBox: {
+  caixaEnergia: {
     backgroundColor: "#fff",
     borderRadius: 15,
     padding: 20,
@@ -227,7 +226,7 @@ const styles = StyleSheet.create({
     shadowRadius: 5,
     elevation: 3,
   },
-  energyLabel: {
+  rotuloEnergia: {
     fontSize: 16,
     color: "#777",
     marginTop: 8,
