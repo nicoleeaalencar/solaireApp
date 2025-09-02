@@ -7,17 +7,18 @@ import {
   ScrollView,
   Image,
 } from "react-native";
+import Svg, { Circle } from "react-native-svg";
+import { LinearGradient } from 'expo-linear-gradient';
+
 
 export default function HomeScreen() {
   const today = new Date();
   const [selectedDate, setSelectedDate] = useState(today);
 
-  // Função de saudação dinâmica
   const hora = today.getHours();
   const saudacao =
     hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
 
-  // Datas
   const formatDate = (date) => {
     return date.toLocaleDateString("pt-BR", { day: "numeric", month: "short" });
   };
@@ -32,19 +33,22 @@ export default function HomeScreen() {
   return (
     <ScrollView style={styles.container}>
       <View style={styles.headerContainer}>
-        <View style={styles.curvedBackground} />
+        <LinearGradient
+          colors={["#9FA5D5", "#E8F5C8"]}
+          start={{ x: 0, y: 1 }}
+          end={{ x: 1, y: 3 }}
+          style={styles.curvedBackground}
+        />
 
-        {/* head perfil*/}
         <View style={styles.avatarRow}>
           <Image
             source={require("../../assets/perfil-avatar.png")}
             style={styles.avatarImagem}
           />
-          <Text style={styles.saudacao}>{saudacao} </Text>
+          <Text style={styles.saudacao}>{saudacao}</Text>
         </View>
 
-        {/* Data | título */}
-        <View style={styles.headerTextContent}>
+        <View style={styles.headerTextoContainer}>
           <Text style={styles.date}>
             Hoje,{" "}
             {today.toLocaleDateString("pt-BR", {
@@ -55,7 +59,6 @@ export default function HomeScreen() {
           <Text style={styles.title}>Suas Atividades</Text>
         </View>
 
-        {/* Dias */}
         <View style={styles.daysRow}>
           {days.map((day, index) => {
             const isSelected = formatDate(day) === formatDate(selectedDate);
@@ -76,12 +79,55 @@ export default function HomeScreen() {
         </View>
       </View>
 
-      {/* Total Energia */}
+      {/* Total Energia com gráfico bolinha */}
       <View style={styles.energyBox}>
-        <Text style={styles.energyValue}>210V</Text>
+        <CircularProgress progress={70} />
         <Text style={styles.energyLabel}>Energia Total</Text>
       </View>
     </ScrollView>
+  );
+}
+
+//gráfico bolinha
+function CircularProgress({ size = 120, strokeWidth = 10, progress = 70, color = "#0a3a5a" }) {
+  const radius = (size - strokeWidth) / 2;
+  const circumference = 2 * Math.PI * radius;
+  const strokeDashoffset = circumference - (progress / 100) * circumference;
+
+  return (
+    <View style={{ alignItems: "center", justifyContent: "center" }}>
+      <Svg width={size} height={size}>
+        <Circle
+          stroke="#e6f2f9"
+          fill="none"
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          strokeWidth={strokeWidth}
+        />
+        <Circle
+          stroke={color}
+          fill="none"
+          cx={size / 2}
+          cy={size / 2}
+          r={radius}
+          strokeWidth={strokeWidth}
+          strokeDasharray={`${circumference} ${circumference}`}
+          strokeDashoffset={strokeDashoffset}
+          strokeLinecap="round"
+          rotation="-90"
+          origin={`${size / 2}, ${size / 2}`}
+        />
+      </Svg>
+      <Text style={{
+        position: "absolute",
+        fontSize: 22,
+        fontWeight: "bold",
+        color: "#333"
+      }}>
+        {progress}%
+      </Text>
+    </View>
   );
 }
 
@@ -91,15 +137,14 @@ const styles = StyleSheet.create({
     backgroundColor: "#fafafaff",
   },
   headerContainer: {
-    backgroundColor: "#fafafaff",
     paddingBottom: 2,
     alignItems: "center",
     position: "relative",
     borderBottomLeftRadius: 50,
     borderBottomRightRadius: 50,
+    overflow: "hidden",
   },
   curvedBackground: {
-    backgroundColor: "#e6f2f9ff",
     position: "absolute",
     top: 0,
     left: 0,
@@ -126,7 +171,7 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#333",
   },
-  headerTextContent: {
+  headerTextoContainer: {
     alignItems: "center",
     marginTop: 15,
     marginBottom: 20,
@@ -181,11 +226,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 5,
     elevation: 3,
-  },
-  energyValue: {
-    fontSize: 32,
-    fontWeight: "bold",
-    color: "#333",
   },
   energyLabel: {
     fontSize: 16,
