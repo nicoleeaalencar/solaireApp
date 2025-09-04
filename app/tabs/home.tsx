@@ -16,14 +16,14 @@ export default function TelaInicial() {
 
   const hora = hoje.getHours();
   const saudacao =
-    hora < 12 ? "Bom dia" : hora < 18 ? "Boa tarde" : "Boa noite";
+    hora < 12 ? "Bom dia, Vannessa" : hora < 18 ? "Boa tarde, Vannessa" : "Boa noite, Vannessa";
 
-  // Gradiente dinâmico conforme hora
+  // Gradiente que muda de acordo com o mmnt do dia
   let coresGradiente;
   let corTextoCabecalho;
 
   if (hora < 12) {
-    coresGradiente = ["#A1C4FD", "#C2E9FB"]; // manhã
+    coresGradiente = ["#4aacd9ff", "#daf1fcff"]; // manhã
     corTextoCabecalho = "#333";
   } else if (hora < 18) {
     coresGradiente = ["#9FA5D5", "#E8F5C8"]; // tarde
